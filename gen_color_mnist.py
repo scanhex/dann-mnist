@@ -67,9 +67,8 @@ def gen_fgbgcolor_data(loader: torch.utils.data.DataLoader, img_size: tuple[int,
         x_rgb = x_rgb * x
         x_rgb_fg = 1. * x_rgb
 
-        color_choice = np.argmax(np.random.multinomial(1, cpr, targets.shape[0]), axis=1) if cpr is not None else 0
-        c = Cfg[color_choice, targets] if cpr is not None else Cfg[
-            color_choice, np.random.randint(nb_classes, size=targets.shape[0])]
+        color_choice = np.argmax(np.random.multinomial(1, cpr, targets.shape[0]), axis=1)
+        c = Cfg[color_choice, targets]
         c = c.reshape(-1, 3, 1, 1)
         c = torch.from_numpy(c).type('torch.FloatTensor')
         x_rgb_fg[:, 0] = x_rgb_fg[:, 0] * c[:, 0]
@@ -78,16 +77,15 @@ def gen_fgbgcolor_data(loader: torch.utils.data.DataLoader, img_size: tuple[int,
 
         bg = (255 - x_rgb)
         # c = C[targets] if np.random.rand()>cpr else C[np.random.randint(C.shape[0], size=targets.shape[0])]
-        color_choice = np.argmax(np.random.multinomial(1, cpr, targets.shape[0]), axis=1) if cpr is not None else 0
-        c = Cbg[color_choice, targets] if cpr is not None else Cbg[
-            color_choice, np.random.randint(nb_classes, size=targets.shape[0])]
+        color_choice = np.argmax(np.random.multinomial(1, cpr, targets.shape[0]), axis=1)
+        c = Cbg[color_choice, targets]
         c = c.reshape(-1, 3, 1, 1)
         c = torch.from_numpy(c).type('torch.FloatTensor')
         bg[:, 0] = bg[:, 0] * c[:, 0]
         bg[:, 1] = bg[:, 1] * c[:, 1]
         bg[:, 2] = bg[:, 2] * c[:, 2]
         x_rgb = x_rgb_fg + bg
-        x_rgb = x_rgb + torch.tensor((noise) * np.random.randn(*x_rgb.size())).type('torch.FloatTensor')
+        x_rgb = x_rgb + torch.tensor(noise * np.random.randn(*x_rgb.size())).type('torch.FloatTensor')
         x_rgb = torch.clamp(x_rgb, 0., 255.)
         if i == 0:
             color_data_x = np.zeros((bs * tot_iters, *img_size))
