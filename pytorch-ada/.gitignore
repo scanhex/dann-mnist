@@ -1,0 +1,19 @@
+.idea/
+.ipynb_checkpoints
+
+__pycache__
+*.egg-info
+*.pyc
+*.bak
+.logs/
+runs/
+data/
+blobs/
+mlruns/
+tensorboard/
+
+slack.json
+
+# documentation
+_build/
+
