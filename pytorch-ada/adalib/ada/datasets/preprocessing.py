@@ -66,6 +66,16 @@ def get_transform(kind):
                 ),
             ]
         )
+    elif kind == "cmnist":
+        transform = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.ToPILImage(),
+                transforms.Resize(32),
+                transforms.ToTensor(),
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+            ]
+        )
     else:
         raise ValueError(f"Unknown transform kind '{kind}'")
     return transform

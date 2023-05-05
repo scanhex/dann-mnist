@@ -9,6 +9,8 @@ from torch.autograd import Variable
 import argparse
 import os
 
+from typing import Tuple
+
 data_path = './datasets/'
 
 parser = argparse.ArgumentParser(description='Generate colored MNIST')
@@ -49,7 +51,11 @@ def get_color_codes(cnt):
     """
 
 
+<<<<<<< HEAD
 def gen_fgbgcolor_data(loader, img_size, cpr, noise=10.):
+=======
+def gen_fgbgcolor_data(loader: torch.utils.data.DataLoader, img_size: Tuple[int, int, int], cpr: Tuple[int], noise=10.):
+>>>>>>> 3c084c95cd00669da2e3c5b57e517d39bda97aed
     assert sum(cpr) == 1, '--cpr must be a non-negative list which sums to 1'
     Cfg = get_color_codes(len(cpr))
     # Cbg = get_color_codes(cpr)

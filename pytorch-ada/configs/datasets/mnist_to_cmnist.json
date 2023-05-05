@@ -1,0 +1,8 @@
+{
+    "dataset_group": "digits",
+    "dataset_name": "MNIST to CMNIST",
+    "source": "mnist",
+    "target": "cmnist",
+    "size_type": "source",
+    "weight_type": "natural"
+}
