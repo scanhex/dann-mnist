@@ -1,4 +1,6 @@
 from enum import Enum
+
+from ada.datasets.dataset_cmnist import CMNIST
 from torchvision.datasets import MNIST, SVHN
 import ada.datasets.preprocessing as proc
 from ada.datasets.dataset_usps import USPS
@@ -11,6 +13,7 @@ class DigitDataset(Enum):
     MNISTM = "MNISTM"
     USPS = "USPS"
     SVHN = "SVHN"
+    CMNIST = "CMNIST"
 
     @staticmethod
     def get_accesses(source: "DigitDataset", target: "DigitDataset", data_path):
@@ -19,6 +22,7 @@ class DigitDataset(Enum):
             DigitDataset.MNISTM: 3,
             DigitDataset.USPS: 1,
             DigitDataset.SVHN: 3,
+            DigitDataset.CMNIST: 3,
         }
 
         transform_names = {
@@ -28,6 +32,7 @@ class DigitDataset(Enum):
             (DigitDataset.USPS, 1): "usps32",
             (DigitDataset.USPS, 3): "usps32rgb",
             (DigitDataset.SVHN, 3): "svhn",
+            (DigitDataset.CMNIST, 3): "cmnist",
         }
 
         factories = {
@@ -35,6 +40,7 @@ class DigitDataset(Enum):
             DigitDataset.MNISTM: MNISTMDatasetAccess,
             DigitDataset.USPS: USPSDatasetAccess,
             DigitDataset.SVHN: SVHNDatasetAccess,
+            DigitDataset.CMNIST: CMNISTDatasetAccess,
         }
 
         # handle color/nb channels
@@ -101,4 +107,16 @@ class SVHNDatasetAccess(DigitDatasetAccess):
     def get_test(self):
         return SVHN(
             self._data_path, split="test", transform=self._transform, download=True
+        )
+
+
+class CMNISTDatasetAccess(DigitDatasetAccess):
+    def get_train(self):
+        return CMNIST(
+            self._data_path, train=True, transform=self._transform, download=True
+        )
+
+    def get_test(self):
+        return CMNIST(
+            self._data_path, train=False, transform=self._transform, download=True
         )
