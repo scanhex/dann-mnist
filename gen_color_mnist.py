@@ -49,7 +49,7 @@ def get_color_codes(cnt):
     """
 
 
-def gen_fgbgcolor_data(loader: torch.utils.data.DataLoader, img_size: tuple[int, int, int], cpr: tuple[int], noise=10.):
+def gen_fgbgcolor_data(loader, img_size, cpr, noise=10.):
     assert sum(cpr) == 1, '--cpr must be a non-negative list which sums to 1'
     Cfg = get_color_codes(len(cpr))
     # Cbg = get_color_codes(cpr)
@@ -90,9 +90,11 @@ def gen_fgbgcolor_data(loader: torch.utils.data.DataLoader, img_size: tuple[int,
         if i == 0:
             color_data_x = np.zeros((bs * tot_iters, *img_size))
             color_data_y = np.zeros((bs * tot_iters,))
+            color_data_color = np.zeros((bs * tot_iters,))
         color_data_x[i * bs: (i + 1) * bs] = x_rgb / 255.
         color_data_y[i * bs: (i + 1) * bs] = targets
-    return color_data_x, color_data_y
+        color_data_color[i * bs: (i + 1) * bs] = color_choice
+    return color_data_x, color_data_y, color_data_color
 
 
 dir_name = data_path + 'cmnist/' + 'fgbg_cmnist_cpr' + '-'.join(str(p) for p in args.cpr) + '/'
@@ -102,10 +104,11 @@ if not os.path.exists(data_path + 'cmnist/'):
 if not os.path.exists(dir_name):
     os.mkdir(dir_name)
 
-color_data_x, color_data_y = gen_fgbgcolor_data(trainloader, img_size=(3, 28, 28), cpr=args.cpr, noise=10.)
+color_data_x, color_data_y, color_data_color = gen_fgbgcolor_data(trainloader, img_size=(3, 28, 28), cpr=args.cpr, noise=10.)
 np.save(dir_name + '/train_x.npy', color_data_x)
 np.save(dir_name + '/train_y.npy', color_data_y)
+np.save(dir_name + '/train_color.npy', color_data_color)
 
-color_data_x, color_data_y = gen_fgbgcolor_data(testloader, img_size=(3, 28, 28), cpr=(1,), noise=10.)
+color_data_x, color_data_y, color_data_color = gen_fgbgcolor_data(testloader, img_size=(3, 28, 28), cpr=(1,), noise=10.)
 np.save(dir_name + 'test_x.npy', color_data_x)
 np.save(dir_name + 'test_y.npy', color_data_y)
