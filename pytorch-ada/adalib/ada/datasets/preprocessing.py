@@ -73,7 +73,8 @@ def get_transform(kind):
                 transforms.ToPILImage(),
                 transforms.Resize(32),
                 transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                transforms.Normalize((0.90, 0.88, 0.92), (0.27, 0.29, 0.24))
             ]
         )
     else:
