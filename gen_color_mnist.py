@@ -11,29 +11,15 @@ import os
 
 from typing import Tuple
 
-data_path = './datasets/'
-
-parser = argparse.ArgumentParser(description='Generate colored MNIST')
-
-# Hyperparams
-parser.add_argument('--cpr', nargs='+', type=float, default=[0.5, 0.5],
-                    help='color choice is made corresponding to a class with these probability')
-args = parser.parse_args()
-
-trans = ([transforms.ToTensor()])
-trans = transforms.Compose(trans)
-fulltrainset = torchvision.datasets.MNIST(root=data_path, train=True, download=True, transform=trans)
-trainloader = torch.utils.data.DataLoader(fulltrainset, batch_size=2000, shuffle=False, num_workers=2, pin_memory=True)
-test_set = torchvision.datasets.MNIST(root=data_path, train=False, download=True, transform=trans)
-testloader = torch.utils.data.DataLoader(test_set, batch_size=2000, shuffle=False, num_workers=2, pin_memory=True)
-nb_classes = 10
-
 COLOR_CODES = [
     [1., 0., 0.],
     [0., 1., 0.],
     [0., 0., 1.],
 ]
+
 colors_used = 0
+
+nb_classes = 10
 
 
 # generate color codes
@@ -97,17 +83,37 @@ def gen_fgbgcolor_data(loader: torch.utils.data.DataLoader, img_size: Tuple[int,
     return color_data_x, color_data_y
 
 
-dir_name = data_path + 'cmnist/' + 'fgbg_cmnist_cpr' + '-'.join(str(p) for p in args.cpr) + '/'
-print(dir_name)
-if not os.path.exists(data_path + 'cmnist/'):
-    os.mkdir(data_path + 'cmnist/')
-if not os.path.exists(dir_name):
-    os.mkdir(dir_name)
+def main():
+    data_path = './datasets/'
 
-color_data_x, color_data_y = gen_fgbgcolor_data(trainloader, img_size=(3, 28, 28), cpr=args.cpr, noise=10.)
-np.save(dir_name + '/train_x.npy', color_data_x)
-np.save(dir_name + '/train_y.npy', color_data_y)
+    parser = argparse.ArgumentParser(description='Generate colored MNIST')
 
-color_data_x, color_data_y = gen_fgbgcolor_data(testloader, img_size=(3, 28, 28), cpr=(1,), noise=10.)
-np.save(dir_name + 'test_x.npy', color_data_x)
-np.save(dir_name + 'test_y.npy', color_data_y)
+    # Hyperparams
+    parser.add_argument('--cpr', nargs='+', type=float, default=[0.5, 0.5],
+                        help='color choice is made corresponding to a class with these probability')
+    args = parser.parse_args()
+
+    trans = ([transforms.ToTensor()])
+    trans = transforms.Compose(trans)
+    fulltrainset = torchvision.datasets.MNIST(root=data_path, train=True, download=True, transform=trans)
+    trainloader = torch.utils.data.DataLoader(fulltrainset, batch_size=2000, shuffle=False, num_workers=2, pin_memory=True)
+    test_set = torchvision.datasets.MNIST(root=data_path, train=False, download=True, transform=trans)
+    testloader = torch.utils.data.DataLoader(test_set, batch_size=2000, shuffle=False, num_workers=2, pin_memory=True)
+
+    dir_name = data_path + 'cmnist/' + 'fgbg_cmnist_cpr' + '-'.join(str(p) for p in args.cpr) + '/'
+    print(dir_name)
+    if not os.path.exists(data_path + 'cmnist/'):
+        os.mkdir(data_path + 'cmnist/')
+    if not os.path.exists(dir_name):
+        os.mkdir(dir_name)
+
+    color_data_x, color_data_y = gen_fgbgcolor_data(trainloader, img_size=(3, 28, 28), cpr=args.cpr, noise=10.)
+    np.save(dir_name + '/train_x.npy', color_data_x)
+    np.save(dir_name + '/train_y.npy', color_data_y)
+
+    color_data_x, color_data_y = gen_fgbgcolor_data(testloader, img_size=(3, 28, 28), cpr=(1,), noise=10.)
+    np.save(dir_name + 'test_x.npy', color_data_x)
+    np.save(dir_name + 'test_y.npy', color_data_y)
+
+if __name__ == '__main__':
+    main()
