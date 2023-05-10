@@ -1,4 +1,5 @@
 import torchvision.transforms as transforms
+from PIL import ImageOps
 
 
 def get_transform(kind):
@@ -31,6 +32,7 @@ def get_transform(kind):
     elif kind == "usps32rgb":
         transform = transforms.Compose(
             [
+                transforms.ToTensor(),
                 transforms.ToPILImage(),
                 transforms.Resize(32),
                 transforms.Grayscale(3),
@@ -70,11 +72,12 @@ def get_transform(kind):
         transform = transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.ToPILImage(),
+                transforms.ToPILImage(mode="RGB"),
+                transforms.Lambda(lambda img: ImageOps.invert(img)),
                 transforms.Resize(32),
                 transforms.ToTensor(),
-                # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-                transforms.Normalize((0.90, 0.88, 0.92), (0.27, 0.29, 0.24))
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                # transforms.Normalize((0.90, 0.88, 0.92), (0.27, 0.29, 0.24))
             ]
         )
     else:

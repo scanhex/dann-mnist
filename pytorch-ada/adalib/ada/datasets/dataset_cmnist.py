@@ -33,6 +33,7 @@ class CMNIST(data.Dataset):
         self.transform = transform
         self.dataset_size = None
         self.train = train
+        self.fout = 'C:/Users/al_mo/Code/mit/6.S052/dann-mnist/cmnist.torch'
 
         # download dataset.
         if download:
@@ -63,7 +64,8 @@ class CMNIST(data.Dataset):
         """
         img, label = self.data[index, ::], self.targets[index]
         if self.transform is not None:
-            img = self.transform(img)
+            img: torch.Tensor = self.transform(img)
+            torch.save(img, self.fout)
         label = torch.LongTensor([np.int64(label).item()])
         return img, label
 
@@ -85,10 +87,10 @@ class CMNIST(data.Dataset):
         train_y_filename = os.path.join(self.path, "train_y.npy")
         test_x_filename = os.path.join(self.path, "test_x.npy")
         test_y_filename = os.path.join(self.path, "test_y.npy")
-        train_x = np.load(train_x_filename)
-        train_y = np.load(train_y_filename)
-        test_x = np.load(test_x_filename)
-        test_y = np.load(test_y_filename)
+        train_x = np.float32(np.load(train_x_filename))
+        train_y = (np.load(train_y_filename))
+        test_x = np.float32(np.load(test_x_filename))
+        test_y = (np.load(test_y_filename))
         if self.train:
             images = train_x
             labels = train_y

@@ -103,10 +103,10 @@ class FeatureExtractorDigits(nn.Module):
         self.bn2 = nn.BatchNorm2d(64)
         self.pool2 = nn.MaxPool2d(2)
         self.relu2 = nn.ReLU()
-        self.conv3 = nn.Conv2d(64, 10, kernel_size=kernel_size)
-        self.bn3 = nn.BatchNorm2d(10)
+        self.conv3 = nn.Conv2d(64, 64 * 2, kernel_size=kernel_size)
+        self.bn3 = nn.BatchNorm2d(64 * 2)
         self.sigmoid = nn.Sigmoid()
-        self._out_features = 10
+        self._out_features = 128
 
     def forward(self, input):
         x = self.bn1(self.conv1(input))
